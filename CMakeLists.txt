@@ -48,6 +48,18 @@ endif (NOT WIN32)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules")
 
 include(create-harden-interface)
+# Helper functions to work with resources (non-code files)
+include(PwsafeResources)
+
+# Version configuration:
+# version.mfc for Windows MFC build, version.wx for all the rest
+# version file has the following format:
+# VER_MAJOR = n
+# VER_MINOR = n
+# VER_REV = n (default 0)
+# VER_SPECIAL = text [or not set]
+# where VER_MAJOR and VER_MINOR are mandatory, and all except
+# VER_SPECIAL must be integers
 
 if (APPLE)
   set (NO_GTEST_DEFAULT ON)
@@ -298,22 +310,36 @@ else()
   endif (NOT WIN32)
 endif()
 
-if (NOT WIN32)
-  add_executable(pwsafe ${PWSAFE_SRCS})
-else (NOT WIN32)
-   add_executable(pwsafe WIN32 ${PWSAFE_SRCS})
-   add_dependencies( pwsafe language-dlls) # i18n dlls
-   if (NOT WX_WINDOWS)
-      set (PWS_DLL_LIBS "pws_at" "pws_osk")
-      set_target_properties(pwsafe PROPERTIES COMPILE_DEFINITIONS
+if (APPLE)
+  set(PWSAFE_RESOURCES
+    src/ui/wxWidgets/graphics/pwsafe.icns
+    xml/pwsafe.xsd
+    xml/pwsafe.xsl
+    xml/pwsafe_filter.xsd
+  )
+  add_executable(pwsafe MACOSX_BUNDLE ${PWSAFE_SRCS} ${PWSAFE_RESOURCES})
+  pwsafe_add_resources(pwsafe FROM helpfiles)
+  pwsafe_add_resources(pwsafe FROM mos)
+  set_target_properties(pwsafe PROPERTIES
+    MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/Xcode/pwsafe.plist"
+  )
+elseif (WIN32)
+  add_executable(pwsafe WIN32 ${PWSAFE_SRCS})
+  add_dependencies(pwsafe language-dlls) # i18n dlls
+  if (NOT WX_WINDOWS)
+    set (PWS_DLL_LIBS "pws_at" "pws_osk")
+    set_target_properties(pwsafe PROPERTIES COMPILE_DEFINITIONS
                             "_BIND_TO_CURRENT_CRT_VERSION;_BIND_TO_CURRENT_MFC_VERSION"
                             LINK_FLAGS "/ENTRY:\"wWinMainCRTStartup\" /MAP /DEBUG")
-   else (NOT WX_WINDOWS)
+  else (NOT WX_WINDOWS)
 #      set_target_properties(pwsafe PROPERTIES COMPILE_DEFINITIONS
 #                            _BIND_TO_CURRENT_CRT_VERSION
 #                            LINK_FLAGS "/ENTRY:\"wWinMainCRTStartup\"")
-   endif (NOT WX_WINDOWS)
-endif (NOT WIN32)
+  endif (NOT WX_WINDOWS)
+else ()
+  add_executable(pwsafe ${PWSAFE_SRCS})
+endif ()
+
 target_link_libraries(pwsafe core os)
 if (XML_XERCESC)
   target_link_libraries(pwsafe ${XercesC_LIBRARY})
@@ -340,11 +366,16 @@ else ()
 endif()
 
 # Installation stuff (for 'make install', but mainly for 'make package')
-install (TARGETS pwsafe RUNTIME DESTINATION "bin")
+install (TARGETS pwsafe RUNTIME DESTINATION "bin" BUNDLE DESTINATION "bin")
 
 target_link_libraries(pwsafe harden_interface)
 
-if (NOT WIN32)
+if (WIN32)
+  install (FILES "xml/pwsafe.xsd" DESTINATION "bin")
+  install (FILES "xml/pwsafe_filter.xsd" DESTINATION "bin")
+elseif (APPLE)
+  # Do nothing here, all files in application bundle
+else ()
   install (DIRECTORY xml DESTINATION "share/passwordsafe")
   ADD_CUSTOM_COMMAND(OUTPUT ${CMAKE_BINARY_DIR}/pwsafe.1.gz
                      COMMAND ${GZIP} ARGS -9 -n -c ${PROJECT_SOURCE_DIR}/docs/pwsafe.1 > pwsafe.1.gz
@@ -361,10 +392,7 @@ if (NOT WIN32)
            FILES_MATCHING PATTERN "*.zip"
            PATTERN "CMakeFiles" EXCLUDE)
 
-else ()
-  install (FILES "xml/pwsafe.xsd" DESTINATION "bin")
-  install (FILES "xml/pwsafe_filter.xsd" DESTINATION "bin")
-endif (NOT WIN32)
+endif ()
 
 # uninstall target
 if(NOT TARGET uninstall)

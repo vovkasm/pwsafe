@@ -36,8 +36,7 @@ file (GLOB I18N_SRCS
   )
 
 # pot is updated from source code
-add_custom_target("pot"
-  DEPENDS "pwsafe.pot")
+add_custom_target("pot" DEPENDS "pwsafe.pot")
 add_custom_command(OUTPUT "pwsafe.pot"
   COMMAND "xgettext"
   ARGS "--default-domain=pwsafe" "--from-code=UTF-8"
@@ -46,8 +45,7 @@ add_custom_command(OUTPUT "pwsafe.pot"
   COMMENT "Updating pwsafe.pot"
   )
 
-add_custom_target("pos"
-  DEPENDS pot ${POS})
+add_custom_target("pos" DEPENDS pot ${POS})
 macro(update_po LANG)
   file (COPY "pos/pwsafe_${LANG}.po" DESTINATION "pos")
   add_custom_command(OUTPUT "pwsafe_${LANG}.po"
@@ -57,12 +55,12 @@ macro(update_po LANG)
     COMMENT "Updating pwsafe_${LANG}.po"
     )
 endmacro(update_po)
+
 foreach (LANG ${LANGS})
   update_po(${LANG})
 endforeach(LANG)
 
-add_custom_target("mos" ALL
-  DEPENDS ${MOS})
+add_custom_target("mos" ALL DEPENDS ${MOS})
 macro(make_mo LANG)
   file (MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/mos/${LANG}/LC_MESSAGES")
   add_custom_command(OUTPUT "mos/${LANG}/LC_MESSAGES/pwsafe.mo"
@@ -71,7 +69,20 @@ macro(make_mo LANG)
     "${SRC_I18N_DIR}/pos/pwsafe_${LANG}.po"
     DEPENDS "${SRC_I18N_DIR}/pos/pwsafe_${LANG}.po"
     )
-  endmacro(make_mo)
+  if (WIN32)
+    set(LOCALE_INSTALL_PREFIX "${LANG}")
+  elseif (APPLE)
+    set(LOCALE_INSTALL_PREFIX "${LANG}.lproj")
+  else ()
+    set(LOCALE_INSTALL_PREFIX "share/locale/${LANG}/LC_MESSAGES")
+  endif()
+  pwsafe_register_resource(mos
+    NAME "mos-${LANG}"
+    LOCATION "${CMAKE_CURRENT_BINARY_DIR}/mos/${LANG}/LC_MESSAGES/pwsafe.mo"
+    INSTALL_DIR "${LOCALE_INSTALL_PREFIX}"
+    )
+endmacro(make_mo)
+
 foreach (LANG ${LANGS})
   make_mo(${LANG})
 endforeach(LANG)

@@ -1,4 +1,4 @@
-set (LANGS "RU" "DE" "ES" "FR" "ZH" "PL")
+# TODO: restore chm compilation
 
 macro(set_lang_help_files FILES_VAR DIR)
   file(GLOB_RECURSE ${FILES_VAR}
@@ -45,20 +45,30 @@ if (WIN32 AND NOT WX_WINDOWS)
 else (WIN32 AND NOT WX_WINDOWS)
   function(make_help OUTPUT_FILE_VAR DIR LANG)
     set_lang_help_files(INPUT_FILES "${DIR}")
+    set(TARGET "help${LANG}")
+    set(OUTPUT_FILE "${CMAKE_CURRENT_BINARY_DIR}/${TARGET}.zip")
 
-    set(OUTPUT_FILE "${CMAKE_CURRENT_BINARY_DIR}/help${LANG}.zip")
-
+    add_custom_target("${TARGET}" DEPENDS ${OUTPUT_FILE})
     add_custom_command(OUTPUT "${OUTPUT_FILE}"
       COMMAND "${CMAKE_COMMAND}" -E tar cf "${OUTPUT_FILE}" . --format=zip
       WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/${DIR}"
       VERBATIM
       )
 
+    add_dependencies(helpfiles "${TARGET}")
+    pwsafe_register_resource(helpfiles NAME ${TARGET} LOCATION "${OUTPUT_FILE}")
+
     set(${OUTPUT_FILE_VAR} "${OUTPUT_FILE}" PARENT_SCOPE)
   endfunction(make_help)
 endif (WIN32 AND NOT WX_WINDOWS)
 
 unset(OUTPUT_FILES)
+
+if (PWS_BUILD_HELP)
+  add_custom_target(helpfiles ALL)
+else()
+  add_custom_target(helpfiles)
+endif ()
 
 # English help is a special case: default -> pwsafe.chm
 
@@ -80,9 +90,3 @@ option(PWS_BUILD_HELP "Build the help files by default." OFF)
 else()
 option(PWS_BUILD_HELP "Build the help files by default." ON)
 endif()
-
-if (PWS_BUILD_HELP)
-  add_custom_target(helpfiles ALL DEPENDS ${OUTPUT_FILES})
-else()
-  add_custom_target(helpfiles DEPENDS ${OUTPUT_FILES})
-endif ()
