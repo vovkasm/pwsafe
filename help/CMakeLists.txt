@@ -27,6 +27,7 @@ if (WIN32)
   endmacro(make_help)
 
 else (WIN32)
+  find_program(ZIP zip)
 
   string (REGEX REPLACE "(..)" "help\\1.zip;" HELPFILES ${LANGS})
   add_custom_target("helpfiles" ALL
@@ -34,15 +35,13 @@ else (WIN32)
     )
   # English help is a special case: default -> helpEN.zip
   add_custom_command(OUTPUT "helpEN.zip"
-    COMMAND "sed" "-i" "pwsafe*.hh?" "-e" "'s&html\\\\&html/&g'"
-    COMMAND "zip" "-Xqr" "${CMAKE_CURRENT_BINARY_DIR}/helpEN" "./*"
+    COMMAND "${ZIP}" "-Xqr" "${CMAKE_CURRENT_BINARY_DIR}/helpEN" "./*"
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/default"
     )
   # Other languages are amenable to a macro:
   macro(make_help LANG)
     add_custom_command(OUTPUT "help${LANG}.zip"
-      COMMAND "sed" "-i" "pwsafe*.hh?" "-e" "'s&html\\\\&html/&g'"
-      COMMAND "zip" "-Xqr" "${CMAKE_CURRENT_BINARY_DIR}/help${LANG}" "./*"
+      COMMAND "${ZIP}" "-Xqr" "${CMAKE_CURRENT_BINARY_DIR}/help${LANG}" "./*"
       WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/pwsafe${LANG}"
       )
   endmacro(make_help)
