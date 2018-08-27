@@ -343,9 +343,9 @@ endif()
 if (NOT WIN32)
   add_executable(pwsafe ${PWSAFE_SRCS})
   if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-  # squash lintian hardening-no-relro warning, probably good for all Linuxen
-  set_target_properties(pwsafe PROPERTIES LINK_FLAGS "-z relro")
-endif (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+    # squash lintian hardening-no-relro warning, probably good for all Linuxen
+    set_target_properties(pwsafe PROPERTIES LINK_FLAGS "-z relro")
+  endif (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 else (NOT WIN32)
    add_executable(pwsafe WIN32 ${PWSAFE_SRCS})
    add_dependencies( pwsafe dlls) # i18n dlls
