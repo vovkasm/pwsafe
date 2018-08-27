@@ -82,9 +82,15 @@ else ()
    set (pwsafe_VERSION "${pwsafe_VERSION_MAJOR}.${pwsafe_VERSION_MINOR}.0")
 endif (pwsafe_REVISION)
 
+if (APPLE)
+  set (NO_GTEST_DEFAULT ON)
+else (APPLE)
+  set (NO_GTEST_DEFAULT OFF)
+endif (APPLE)
+
 # Configurable options:
 option (NO_YUBI "Set ON to disable YubiKey support" OFF)
-option (NO_GTEST "Set ON to disable gtest unit testing" OFF)
+option (NO_GTEST "Set ON to disable gtest unit testing" ${NO_GTEST_DEFAULT})
 
 if (WIN32)
   option (WX_WINDOWS "Build wxWidget under Windows" OFF)
