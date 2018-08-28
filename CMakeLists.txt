@@ -348,13 +348,15 @@ endif()
 
 if (APPLE)
   set(PWSAFE_RESOURCES
-    ${CMAKE_CURRENT_BINARY_DIR}/help/helpEN.zip
+    ${passwordsafe_BINARY_DIR}/help/helpEN.zip
     src/ui/wxWidgets/graphics/pwsafe.icns
     xml/pwsafe.xsd
     xml/pwsafe.xsl
     xml/pwsafe_filter.xsd
   )
+  set_source_files_properties(${passwordsafe_BINARY_DIR}/help/helpEN.zip PROPERTIES GENERATED 1)
   add_executable(pwsafe MACOSX_BUNDLE ${PWSAFE_SRCS} ${PWSAFE_RESOURCES})
+  add_dependencies(pwsafe helpfiles)
   set_target_properties(pwsafe PROPERTIES
     MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/Xcode/pwsafe.plist"
     RESOURCE "${PWSAFE_RESOURCES}"
