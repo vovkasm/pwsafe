@@ -317,6 +317,7 @@ if (APPLE)
     xml/pwsafe.xsl
     xml/pwsafe_filter.xsd
   )
+  set_source_files_properties(${PWSAFE_RESOURCES} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
   add_executable(pwsafe MACOSX_BUNDLE ${PWSAFE_SRCS} ${PWSAFE_RESOURCES})
   pwsafe_add_resources(pwsafe FROM helpfiles)
   pwsafe_add_resources(pwsafe FROM mos)
