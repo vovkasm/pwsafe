@@ -346,27 +346,28 @@ else()
   endif (NOT WIN32)
 endif()
 
-if (NOT WIN32)
+if (WIN32)
+  add_executable(pwsafe WIN32 ${PWSAFE_SRCS})
+  add_dependencies(pwsafe dlls) # i18n dlls
+  if (NOT WX_WINDOWS)
+    set (CMAKE_MFC_FLAG 1)
+    set (PWS_DLL_LIBS "pws_at" "pws_osk")
+    set_target_properties(pwsafe PROPERTIES COMPILE_DEFINITIONS
+                            "_BIND_TO_CURRENT_CRT_VERSION;_BIND_TO_CURRENT_MFC_VERSION"
+                            LINK_FLAGS "/ENTRY:\"wWinMainCRTStartup\" /MAP /DEBUG")
+  else (NOT WX_WINDOWS)
+#      set_target_properties(pwsafe PROPERTIES COMPILE_DEFINITIONS
+#                            _BIND_TO_CURRENT_CRT_VERSION
+#                            LINK_FLAGS "/ENTRY:\"wWinMainCRTStartup\"")
+  endif (NOT WX_WINDOWS)
+else ()
   add_executable(pwsafe ${PWSAFE_SRCS})
   if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     # squash lintian hardening-no-relro warning, probably good for all Linuxen
     set_target_properties(pwsafe PROPERTIES LINK_FLAGS "-z relro")
   endif (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-else (NOT WIN32)
-   add_executable(pwsafe WIN32 ${PWSAFE_SRCS})
-   add_dependencies( pwsafe dlls) # i18n dlls
-   if (NOT WX_WINDOWS)
-      set (CMAKE_MFC_FLAG 1)
-      set (PWS_DLL_LIBS "pws_at" "pws_osk")
-      set_target_properties(pwsafe PROPERTIES COMPILE_DEFINITIONS
-                            "_BIND_TO_CURRENT_CRT_VERSION;_BIND_TO_CURRENT_MFC_VERSION"
-                            LINK_FLAGS "/ENTRY:\"wWinMainCRTStartup\" /MAP /DEBUG")
-   else (NOT WX_WINDOWS)
-#      set_target_properties(pwsafe PROPERTIES COMPILE_DEFINITIONS
-#                            _BIND_TO_CURRENT_CRT_VERSION
-#                            LINK_FLAGS "/ENTRY:\"wWinMainCRTStartup\"")
-   endif (NOT WX_WINDOWS)
-endif (NOT WIN32)
+endif ()
+
 target_link_libraries(pwsafe core os)
 if (XML_XERCESC)
   target_link_libraries(pwsafe ${XercesC_LIBRARY})
