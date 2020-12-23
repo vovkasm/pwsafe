@@ -328,6 +328,9 @@ if (NOT NO_GTEST)
    add_subdirectory (src/test) # tests (gtest framework)
 endif(NOT NO_GTEST)
 add_subdirectory (help) # online help
+# extract generated help files list (TODO: windows support)
+get_property(PWSAFE_HELP_FILES TARGET helpfiles PROPERTY GENERATED_FILES)
+set_source_files_properties(${PWSAFE_HELP_FILES} PROPERTIES GENERATED 1)
 if (WIN32 AND NOT WX_WINDOWS)
   add_subdirectory (src/Tools/Windows/I18N/ResText)
   add_subdirectory (src/Tools/Windows/I18N/ResPWSL)
@@ -348,13 +351,12 @@ endif()
 
 if (APPLE)
   set(PWSAFE_RESOURCES
-    ${passwordsafe_BINARY_DIR}/help/helpEN.zip
+    ${PWSAFE_HELP_FILES}
     src/ui/wxWidgets/graphics/pwsafe.icns
     xml/pwsafe.xsd
     xml/pwsafe.xsl
     xml/pwsafe_filter.xsd
   )
-  set_source_files_properties(${passwordsafe_BINARY_DIR}/help/helpEN.zip PROPERTIES GENERATED 1)
   add_executable(pwsafe MACOSX_BUNDLE ${PWSAFE_SRCS} ${PWSAFE_RESOURCES})
   add_dependencies(pwsafe helpfiles)
   set_target_properties(pwsafe PROPERTIES
@@ -414,7 +416,12 @@ endif (IPO_SUPPORTED)
 install (TARGETS pwsafe RUNTIME DESTINATION "bin" BUNDLE DESTINATION "bin")
 
 
-if (NOT WIN32)
+if (WIN32)
+  install (FILES "xml/pwsafe.xsd" DESTINATION "bin")
+  install (FILES "xml/pwsafe_filter.xsd" DESTINATION "bin")
+elseif (APPLE)
+  # Do nothing here, all files in application bundle
+else ()
   install (DIRECTORY xml DESTINATION "share/passwordsafe/")
   ADD_CUSTOM_COMMAND(OUTPUT ${CMAKE_BINARY_DIR}/pwsafe.1.gz
                      COMMAND ${GZIP} ARGS -9 -n -c ${PROJECT_SOURCE_DIR}/docs/pwsafe.1 > pwsafe.1.gz
@@ -431,10 +438,7 @@ if (NOT WIN32)
            FILES_MATCHING PATTERN "*.zip"
            PATTERN "CMakeFiles" EXCLUDE)
 
-else ()
-  install (FILES "xml/pwsafe.xsd" DESTINATION "bin")
-  install (FILES "xml/pwsafe_filter.xsd" DESTINATION "bin")
-endif (NOT WIN32)
+endif ()
 
 # uninstall target
 if(NOT TARGET uninstall)

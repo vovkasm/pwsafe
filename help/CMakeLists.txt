@@ -38,12 +38,14 @@ else (WIN32)
     COMMAND "${ZIP}" "-Xqr" "${CMAKE_CURRENT_BINARY_DIR}/helpEN" "./*"
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/default"
     )
+  set_property(TARGET helpfiles APPEND PROPERTY GENERATED_FILES "${CMAKE_CURRENT_BINARY_DIR}/helpEN.zip")
   # Other languages are amenable to a macro:
   macro(make_help LANG)
     add_custom_command(OUTPUT "help${LANG}.zip"
       COMMAND "${ZIP}" "-Xqr" "${CMAKE_CURRENT_BINARY_DIR}/help${LANG}" "./*"
       WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/pwsafe${LANG}"
       )
+    set_property(TARGET helpfiles APPEND PROPERTY GENERATED_FILES "${CMAKE_CURRENT_BINARY_DIR}/help${LANG}.zip")
   endmacro(make_help)
 
 endif (WIN32)
