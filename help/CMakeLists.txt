@@ -13,8 +13,10 @@ function(make_help lang source_dir)
     )
 
   add_dependencies(helpfiles "${target}")
-  set_property(TARGET helpfiles APPEND PROPERTY RESOURCE_NAMES "${output}")
-  set_property(TARGET helpfiles PROPERTY "RESOURCE_FILE_${output}" "${CMAKE_CURRENT_BINARY_DIR}/${output}")
+  pwsafe_register_resource(helpfiles
+    NAME ${target}
+    LOCATION "${CMAKE_CURRENT_BINARY_DIR}/${output}"
+    )
 endfunction()
 
 add_custom_target(helpfiles ALL)
