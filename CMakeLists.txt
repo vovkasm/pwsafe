@@ -319,6 +319,21 @@ if (WIN32)
    set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 endif (WIN32)
 
+# functions
+
+function(add_target_resources target resource_target)
+  get_property(res_names TARGET ${resource_target} PROPERTY RESOURCE_NAMES)
+  foreach(name ${res_names})
+    get_property(file TARGET ${resource_target} PROPERTY "RESOURCE_FILE_${name}")
+    set_source_files_properties(${file} PROPERTIES
+      GENERATED 1
+      MACOSX_PACKAGE_LOCATION Resources
+      )
+    target_sources(${target} PUBLIC ${file})
+  endforeach()
+  add_dependencies(${target} ${resource_target})
+endfunction()
+
 # Subdirectories
 
 add_subdirectory (src/os) # os-specific library
@@ -328,9 +343,6 @@ if (NOT NO_GTEST)
    add_subdirectory (src/test) # tests (gtest framework)
 endif(NOT NO_GTEST)
 add_subdirectory (help) # online help
-# extract generated help files list (TODO: windows support)
-get_property(PWSAFE_HELP_FILES TARGET helpfiles PROPERTY GENERATED_FILES)
-set_source_files_properties(${PWSAFE_HELP_FILES} PROPERTIES GENERATED 1)
 if (WIN32 AND NOT WX_WINDOWS)
   add_subdirectory (src/Tools/Windows/I18N/ResText)
   add_subdirectory (src/Tools/Windows/I18N/ResPWSL)
@@ -351,17 +363,15 @@ endif()
 
 if (APPLE)
   set(PWSAFE_RESOURCES
-    ${PWSAFE_HELP_FILES}
     src/ui/wxWidgets/graphics/pwsafe.icns
     xml/pwsafe.xsd
     xml/pwsafe.xsl
     xml/pwsafe_filter.xsd
   )
   add_executable(pwsafe MACOSX_BUNDLE ${PWSAFE_SRCS} ${PWSAFE_RESOURCES})
-  add_dependencies(pwsafe helpfiles)
+  add_target_resources(pwsafe helpfiles)
   set_target_properties(pwsafe PROPERTIES
     MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/Xcode/pwsafe.plist"
-    RESOURCE "${PWSAFE_RESOURCES}"
   )
 elseif (WIN32)
   add_executable(pwsafe WIN32 ${PWSAFE_SRCS})
