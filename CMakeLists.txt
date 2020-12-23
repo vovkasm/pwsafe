@@ -346,7 +346,20 @@ else()
   endif (NOT WIN32)
 endif()
 
-if (WIN32)
+if (APPLE)
+  set(PWSAFE_RESOURCES
+    ${CMAKE_CURRENT_BINARY_DIR}/help/helpEN.zip
+    src/ui/wxWidgets/graphics/pwsafe.icns
+    xml/pwsafe.xsd
+    xml/pwsafe.xsl
+    xml/pwsafe_filter.xsd
+  )
+  add_executable(pwsafe MACOSX_BUNDLE ${PWSAFE_SRCS} ${PWSAFE_RESOURCES})
+  set_target_properties(pwsafe PROPERTIES
+    MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/Xcode/pwsafe.plist"
+    RESOURCE "${PWSAFE_RESOURCES}"
+  )
+elseif (WIN32)
   add_executable(pwsafe WIN32 ${PWSAFE_SRCS})
   add_dependencies(pwsafe dlls) # i18n dlls
   if (NOT WX_WINDOWS)
@@ -396,7 +409,7 @@ if (IPO_SUPPORTED)
 endif (IPO_SUPPORTED)
 
 # Installation stuff (for 'make install', but mainly for 'make package')
-install (TARGETS pwsafe RUNTIME DESTINATION "bin")
+install (TARGETS pwsafe RUNTIME DESTINATION "bin" BUNDLE DESTINATION "bin")
 
 
 if (NOT WIN32)
