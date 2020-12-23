@@ -419,14 +419,14 @@ if (IPO_SUPPORTED)
 endif (IPO_SUPPORTED)
 
 # Installation stuff (for 'make install', but mainly for 'make package')
-install (TARGETS pwsafe RUNTIME DESTINATION "bin" BUNDLE DESTINATION "bin")
+install (TARGETS pwsafe RUNTIME DESTINATION "bin" BUNDLE DESTINATION ".")
 
 # Bundle library dependency after installing app
 if (APPLE)
   install(CODE "
     include(BundleUtilities)
     set(BU_CHMOD_BUNDLE_ITEMS 1)
-    fixup_bundle(\"\${CMAKE_INSTALL_PREFIX}/bin/pwsafe.app\" \"\" \"\")
+    fixup_bundle(\"\${CMAKE_INSTALL_PREFIX}/pwsafe.app\" \"\" \"\")
     "
     )
 endif()
@@ -435,7 +435,8 @@ if (WIN32)
   install (FILES "xml/pwsafe.xsd" DESTINATION "bin")
   install (FILES "xml/pwsafe_filter.xsd" DESTINATION "bin")
 elseif (APPLE)
-  # Do nothing here, all files in application bundle
+  # Most files in pwsafe.app bundle, but some aux files needs to be installed for installer generation
+  install (FILES "README.md" "docs/LICENSE.rtf" "docs/ReleaseNotes.txt" DESTINATION ".")
 else ()
   install (DIRECTORY xml DESTINATION "share/passwordsafe/")
   ADD_CUSTOM_COMMAND(OUTPUT ${CMAKE_BINARY_DIR}/pwsafe.1.gz
@@ -710,6 +711,31 @@ set (CPACK_RPM_EXCLUDE_FROM_AUTO_FILELIST_ADDITION
      "/usr/share/icons" "/usr/share/icons/hicolor"
      "/usr/share/icons/hicolor/48x48" "/usr/share/icons/hicolor/48x48/apps"
     )
+
+## macOS DragNDrop installer
+if (APPLE)
+    # Write applescript to get .DS_Store for installer
+    set(pwsafe_DMG_WINX 10)
+    set(pwsafe_DMG_WINY 60)
+    set(pwsafe_DMG_WINW 310)
+    set(pwsafe_DMG_WINH 310)
+    set(pwsafe_DMG_ICON_SIZE 40)
+    set(pwsafe_DMG_BACKGROUND_CLAUSE "")
+    set(pwsafe_DMG_POSITION_CLAUSE "
+    set position of item \"pwsafe.app\" to {100, 95}
+    set position of item \"README.md\" to {60, 250}
+    set position of item \"ReleaseNotes.txt\" to {150, 250}
+    set position of item \"LICENSE.rtf\" to {250, 250}
+    ")
+    set(pwsafe_DMG_HIDING_CLAUSE "")
+    set(pwsafe_DMG_APPLICATION_CLAUSE "
+    set position of item \"Applications\" to {220, 95}
+    ")
+    configure_file(install/macosx/template.applescript.in template.applescript @ONLY)
+    set (CPACK_DMG_VOLUME_NAME "${PROJECT_NAME}")
+    set (CPACK_DMG_DS_STORE_SETUP_SCRIPT "${CMAKE_CURRENT_BINARY_DIR}/template.applescript")
+endif ()
+
 include(CPack)
 ### End of packaging section
 ### End of CMakeLists.txt
