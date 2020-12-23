@@ -358,6 +358,7 @@ if (APPLE)
   )
   add_executable(pwsafe MACOSX_BUNDLE ${PWSAFE_SRCS} ${PWSAFE_RESOURCES})
   pwsafe_add_resources(pwsafe FROM helpfiles)
+  pwsafe_add_resources(pwsafe FROM mos)
   set_target_properties(pwsafe PROPERTIES
     MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/Xcode/pwsafe.plist"
   )
