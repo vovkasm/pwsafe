@@ -1,55 +1,31 @@
-set (LANGS "RU" "DE" "ES" "FR" "ZH" "PL")
+# TODO: restore chm compilation
 
-if (WIN32)
-  set (LANGS "DE" "FR" "RU" "ES")
-  # pwsafePL -- nothing there :-(
-  # pwsafeZH -- currently breaks my hhc :-(
+find_program(ZIP_EXECUTABLE zip)
 
-  set (HHC "HTMLHelpWorkshopCompiler_undefined" CACHE FILEPATH
-       "Microsoft's help compiler (hhc.exe)")
+function(make_help lang source_dir)
+  set(output "help${lang}.zip")
+  set(target "help${lang}")
 
-  string (REGEX REPLACE "(..)" "pwsafe\\1/pwsafe\\1.chm;" HELPFILES ${LANGS})
-  add_custom_target("helpfiles" ALL
-    DEPENDS "default/pwsafe.chm" ${HELPFILES}
+  add_custom_target("${target}" DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/${output}")
+  add_custom_command(OUTPUT "${output}"
+    COMMAND "${ZIP_EXECUTABLE}" "-Xqr" "${CMAKE_CURRENT_BINARY_DIR}/${output}" "./*"
+    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/${source_dir}"
     )
 
-  # English help is a special case: default -> pwsafe.chm
-  add_custom_command(OUTPUT "pwsafe.chm"
-                     COMMAND ${HHC} "pwsafe.hhp"
-                     WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/default"
-                     )
+  add_dependencies(helpfiles "${target}")
+  set_property(TARGET helpfiles APPEND PROPERTY RESOURCE_NAMES "${output}")
+  set_property(TARGET helpfiles PROPERTY "RESOURCE_FILE_${output}" "${CMAKE_CURRENT_BINARY_DIR}/${output}")
+endfunction()
 
-  macro(make_help LANG)
-    add_custom_command(OUTPUT "pwsafe${LANG}.chm"
-                       COMMAND ${HHC} "pwsafe.hhp"
-                       WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/pwsafe${LANG}"
-                       )
-  endmacro(make_help)
+add_custom_target(helpfiles ALL)
 
-else (WIN32)
-  find_program(ZIP zip)
+make_help(EN default)
+make_help(DE pwsafeDE)
+make_help(ES pwsafeES)
+make_help(FR pwsafeFR)
+make_help(RU pwsafeRU)
+if (NOT WIN32)
+make_help(PL pwsafePL) # pwsafePL -- nothing there :-(
+make_help(ZH pwsafeZH) # pwsafeZH -- currently breaks my hhc :-(
+endif()
 
-  string (REGEX REPLACE "(..)" "help\\1.zip;" HELPFILES ${LANGS})
-  add_custom_target("helpfiles" ALL
-    DEPENDS "helpEN.zip" ${HELPFILES}
-    )
-  # English help is a special case: default -> helpEN.zip
-  add_custom_command(OUTPUT "helpEN.zip"
-    COMMAND "${ZIP}" "-Xqr" "${CMAKE_CURRENT_BINARY_DIR}/helpEN" "./*"
-    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/default"
-    )
-  set_property(TARGET helpfiles APPEND PROPERTY GENERATED_FILES "${CMAKE_CURRENT_BINARY_DIR}/helpEN.zip")
-  # Other languages are amenable to a macro:
-  macro(make_help LANG)
-    add_custom_command(OUTPUT "help${LANG}.zip"
-      COMMAND "${ZIP}" "-Xqr" "${CMAKE_CURRENT_BINARY_DIR}/help${LANG}" "./*"
-      WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/pwsafe${LANG}"
-      )
-    set_property(TARGET helpfiles APPEND PROPERTY GENERATED_FILES "${CMAKE_CURRENT_BINARY_DIR}/help${LANG}.zip")
-  endmacro(make_help)
-
-endif (WIN32)
-
-foreach (LANG ${LANGS})
-  make_help(${LANG})
-endforeach(LANG)
