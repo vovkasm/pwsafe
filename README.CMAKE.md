@@ -123,7 +123,7 @@ $ make
 ### Requirements
 
 ```sh
-brew install cmake wxmac xerces-c gettext ninja
+brew install cmake wxmac xerces-c gettext ninja openssl
 ```
 
 ### Environment
@@ -139,7 +139,7 @@ export PATH=$PATH:/usr/local/opt/gettext/bin
 ```sh
 mkdir build
 cd build
-cmake -GNinja ..
+cmake -GNinja -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl ..
 ninja
 ```
 
