@@ -31,6 +31,9 @@ endif (NOT WIN32)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules")
 
+# Helper functions to work with resources (non-code files)
+include(PwsafeResources)
+
 # Version configuration:
 # version.mfc for Windows MFC build, version.wx for all the rest
 # version file has the following format:
@@ -319,21 +322,6 @@ if (WIN32)
    set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 endif (WIN32)
 
-# functions
-
-function(add_target_resources target resource_target)
-  get_property(res_names TARGET ${resource_target} PROPERTY RESOURCE_NAMES)
-  foreach(name ${res_names})
-    get_property(file TARGET ${resource_target} PROPERTY "RESOURCE_FILE_${name}")
-    set_source_files_properties(${file} PROPERTIES
-      GENERATED 1
-      MACOSX_PACKAGE_LOCATION Resources
-      )
-    target_sources(${target} PUBLIC ${file})
-  endforeach()
-  add_dependencies(${target} ${resource_target})
-endfunction()
-
 # Subdirectories
 
 add_subdirectory (src/os) # os-specific library
@@ -369,7 +357,7 @@ if (APPLE)
     xml/pwsafe_filter.xsd
   )
   add_executable(pwsafe MACOSX_BUNDLE ${PWSAFE_SRCS} ${PWSAFE_RESOURCES})
-  add_target_resources(pwsafe helpfiles)
+  pwsafe_add_resources(pwsafe FROM helpfiles)
   set_target_properties(pwsafe PROPERTIES
     MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/Xcode/pwsafe.plist"
   )
