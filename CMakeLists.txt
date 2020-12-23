@@ -321,7 +321,14 @@ if (APPLE)
   pwsafe_add_resources(pwsafe FROM helpfiles)
   pwsafe_add_resources(pwsafe FROM mos)
   set_target_properties(pwsafe PROPERTIES
-    MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/Xcode/pwsafe.plist"
+    MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/cmake/MacosxBundleInfo.plist.in"
+    MACOSX_BUNDLE_BUNDLE_NAME "pwSafe"
+    MACOSX_BUNDLE_BUNDLE_VERSION "1"
+    MACOSX_BUNDLE_COPYRIGHT "© 2003-2020 Copyright Rony Shapiro\nAll rights reserved"
+    MACOSX_BUNDLE_GUI_IDENTIFIER "org.pwsafe.pwsafe"
+    MACOSX_BUNDLE_ICON_FILE "pwsafe.icns"
+    MACOSX_BUNDLE_LONG_VERSION_STRING "1.0"
+    MACOSX_BUNDLE_SHORT_VERSION_STRING "1.0"
   )
 elseif (WIN32)
   add_executable(pwsafe WIN32 ${PWSAFE_SRCS})
@@ -369,6 +376,16 @@ endif()
 install (TARGETS pwsafe RUNTIME DESTINATION "bin" BUNDLE DESTINATION "bin")
 
 target_link_libraries(pwsafe harden_interface)
+
+# Bundle library dependency after installing app
+if (APPLE)
+  install(CODE "
+    include(BundleUtilities)
+    set(BU_CHMOD_BUNDLE_ITEMS 1)
+    fixup_bundle(\"\${CMAKE_INSTALL_PREFIX}/bin/pwsafe.app\" \"\" \"\")
+    "
+    )
+endif()
 
 if (WIN32)
   install (FILES "xml/pwsafe.xsd" DESTINATION "bin")
