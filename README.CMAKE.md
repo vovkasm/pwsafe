@@ -131,7 +131,7 @@ brew install cmake wxmac xerces-c gettext ninja openssl
 To allow cmake to find gettext tools, add them to path
 
 ```sh
-export PATH=$PATH:/usr/local/opt/gettext/bin
+export PATH=/usr/local/opt/gettext/bin:$PATH
 ```
 
 ### Build
