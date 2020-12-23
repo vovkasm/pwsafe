@@ -117,3 +117,40 @@ $ cmake-gui .. # configure stuff as needed
 $ cmake ..
 $ make
 ```
+
+## macOS
+
+### Requirements
+
+```sh
+brew install cmake wxmac xerces-c gettext ninja
+```
+
+### Environment
+
+To allow cmake to find gettext tools, add them to path
+
+```sh
+export PATH=$PATH;/usr/local/opt/gettext/bin
+```
+
+### Build
+
+```sh
+mkdir build
+cd build
+cmake -GNinja ..
+ninja
+```
+
+You will get pwsafe.app in current directory. It will work on your mac while
+third paty libraries (wxWidgets, xerces, may be other) don't change
+in incompatible way. To build fully distributable package, see next step.
+
+### Installer
+
+```sh
+cpack -G DragNDrop
+```
+
+This should create dmg file that contains standalone application bundle suitable for distribution.
