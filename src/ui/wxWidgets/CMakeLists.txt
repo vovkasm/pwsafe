@@ -165,7 +165,7 @@ endif (${CMAKE_SYSTEM_NAME} MATCHES "Linux" OR ${CMAKE_SYSTEM_NAME} MATCHES "Ope
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
   list(APPEND PWSAFE_SRC_LIST src/ui/wxWidgets/QRCodeDlg.cpp src/ui/wxWidgets/QREncode.mm)
-  list(APPEND PWSAFE_HDR_LIST src/ui/wxWidgets/QREncode.h src/ui/wxWidgets/QRCodeDlg.h)
+  list(APPEND PWSAFE_HDR_LIST src/ui/wxWidgets/QRCodeDlg.h src/ui/wxWidgets/QREncode.h)
 endif (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 
 set (PWSAFE_SRCS ${PWSAFE_SRC_LIST} PARENT_SCOPE)

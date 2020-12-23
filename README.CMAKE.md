@@ -123,7 +123,7 @@ $ make
 ### Requirements
 
 ```sh
-brew install cmake wxmac xerces-c gettext ninja
+brew install cmake wxmac xerces-c gettext ninja openssl libmagic
 ```
 
 ### Environment
@@ -131,7 +131,7 @@ brew install cmake wxmac xerces-c gettext ninja
 To allow cmake to find gettext tools, add them to path
 
 ```sh
-export PATH=$PATH;/usr/local/opt/gettext/bin
+export PATH=/usr/local/opt/gettext/bin:$PATH
 ```
 
 ### Build
@@ -139,7 +139,7 @@ export PATH=$PATH;/usr/local/opt/gettext/bin
 ```sh
 mkdir build
 cd build
-cmake -GNinja ..
+cmake -GNinja -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl ..
 ninja
 ```
 

@@ -322,7 +322,7 @@ if (APPLE)
   pwsafe_add_resources(pwsafe FROM helpfiles)
   pwsafe_add_resources(pwsafe FROM mos)
   set_target_properties(pwsafe PROPERTIES
-    MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/cmake/MacosxBundleInfo.plist.in"
+    MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules/MacosxBundleInfo.plist.in"
     MACOSX_BUNDLE_BUNDLE_NAME "pwSafe"
     MACOSX_BUNDLE_BUNDLE_VERSION "1"
     MACOSX_BUNDLE_COPYRIGHT "© 2003-2020 Copyright Rony Shapiro\nAll rights reserved"
@@ -393,7 +393,7 @@ if (WIN32)
   install (FILES "xml/pwsafe_filter.xsd" DESTINATION "bin")
 elseif (APPLE)
   # Most files in pwsafe.app bundle, but some aux files needs to be installed for installer generation
-  install (FILES "README.md" "docs/LICENSE.rtf" "docs/ReleaseNotes.txt" DESTINATION ".")
+  install (FILES "README.md" "docs/LICENSE.rtf" "docs/ReleaseNotes.md" DESTINATION ".")
 else ()
   install (DIRECTORY xml DESTINATION "share/passwordsafe")
   ADD_CUSTOM_COMMAND(OUTPUT ${CMAKE_BINARY_DIR}/pwsafe.1.gz
@@ -724,19 +724,19 @@ if (APPLE)
     # Write applescript to get .DS_Store for installer
     set(pwsafe_DMG_WINX 10)
     set(pwsafe_DMG_WINY 60)
-    set(pwsafe_DMG_WINW 310)
-    set(pwsafe_DMG_WINH 310)
+    set(pwsafe_DMG_WINW 410)
+    set(pwsafe_DMG_WINH 370)
     set(pwsafe_DMG_ICON_SIZE 40)
     set(pwsafe_DMG_BACKGROUND_CLAUSE "")
     set(pwsafe_DMG_POSITION_CLAUSE "
-    set position of item \"pwsafe.app\" to {100, 95}
-    set position of item \"README.md\" to {60, 250}
-    set position of item \"ReleaseNotes.txt\" to {150, 250}
-    set position of item \"LICENSE.rtf\" to {250, 250}
+    set position of item \"pwsafe.app\" to {0, 110}
+    set position of item \"README.md\" to {60, 290}
+    set position of item \"ReleaseNotes.md\" to {150, 290}
+    set position of item \"LICENSE.rtf\" to {250, 290}
     ")
     set(pwsafe_DMG_HIDING_CLAUSE "")
     set(pwsafe_DMG_APPLICATION_CLAUSE "
-    set position of item \"Applications\" to {220, 95}
+    set position of item \"Applications\" to {240, 110}
     ")
     configure_file(install/macosx/template.applescript.in template.applescript @ONLY)
     set (CPACK_DMG_VOLUME_NAME "${PROJECT_NAME}")
