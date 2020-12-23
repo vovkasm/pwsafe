@@ -123,7 +123,7 @@ $ make
 ### Requirements
 
 ```sh
-brew install cmake wxmac xerces-c gettext ninja openssl
+brew install cmake wxmac xerces-c gettext ninja openssl libmagic
 ```
 
 ### Environment
