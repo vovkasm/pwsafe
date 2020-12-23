@@ -37,14 +37,15 @@ endif (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
 
 
-target_link_libraries(pwsafe-cli core os core uuid ${wxWidgets_LIBRARIES})
+target_link_libraries(pwsafe-cli core os core ${wxWidgets_LIBRARIES})
 if (XercesC_LIBRARY)
   target_link_libraries(pwsafe-cli ${XercesC_LIBRARY})
 endif (XercesC_LIBRARY)
 
-if (NOT WIN32)
-	target_link_libraries(pwsafe-cli pthread magic)
+if (WIN32)
+  target_link_libraries(pwsafe-cli uuid Rpcrt4)
+  set_target_properties(pwsafe-cli PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CACHEFILE_DIR})
+elseif (APPLE)
 else ()
-	target_link_libraries(pwsafe-cli Rpcrt4)
-	set_target_properties(pwsafe-cli PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CACHEFILE_DIR})
-endif (NOT WIN32)
+  target_link_libraries(pwsafe-cli uuid pthread magic)
+endif ()
