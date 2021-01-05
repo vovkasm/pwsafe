@@ -18,6 +18,7 @@
 #include <cstdlib>
 #include <cstring> // for memset
 #include <sys/stat.h>
+#include <wx/stdpaths.h>
 
 stringT pws_os::getexecdir()
 {
@@ -183,11 +184,10 @@ stringT pws_os::getxmldir(void)
 
 stringT pws_os::gethelpdir(void)
 {
-#if defined(__FreeBSD__) && !(defined(_DEBUG) || defined(DEBUG))
-  return _S("/usr/local/share/doc/passwordsafe/help/");
-#elif defined(_DEBUG) || defined(DEBUG)
-  return _S("help/");
+  stringT prefix = wxStandardPaths::Get().GetInstallPrefix().ToStdWstring();
+#if defined(__FreeBSD__)
+  return prefix + _S("/share/doc/passwordsafe/help/");
 #else
-  return _S("/usr/share/passwordsafe/help/");
+  return prefix + _S("/share/passwordsafe/help/");
 #endif
 }
