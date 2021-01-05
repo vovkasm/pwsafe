@@ -1,5 +1,5 @@
 
-include(CmakeParseArguments)
+include(CMakeParseArguments)
 
 # functions
 

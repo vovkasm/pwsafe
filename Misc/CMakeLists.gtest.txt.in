@@ -1,7 +1,7 @@
 # Cmake template for downloading and building gtest at config time
 # See https://crascit.com/2015/07/25/cmake-gtest/
 
-cmake_minimum_required(VERSION 2.8.2)
+cmake_minimum_required(VERSION 3.5.1)
 
 project(googletest-download NONE)
 
