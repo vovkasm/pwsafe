@@ -123,7 +123,7 @@ $ make
 ### Requirements
 
 ```sh
-brew install cmake wxmac xerces-c gettext ninja openssl libmagic
+brew install cmake wxwidgets xerces-c gettext ninja openssl libmagic
 ```
 
 ### Environment
@@ -134,13 +134,17 @@ To allow cmake to find gettext tools, add them to path
 export PATH=/usr/local/opt/gettext/bin:$PATH
 ```
 
+Point cmake to custom wxWidgets build by setup `WX_CONFIG` environment variable (optional).
+
+```sh
+export WX_CONFIG=<path to wx-config script>
+```
+
 ### Build
 
 ```sh
-mkdir build
-cd build
-cmake -GNinja -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl ..
-ninja
+cmake -S <path-to-source> -B <path-to-build-dir> -GNinja -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl
+cmake --build <path-to-build-dir>
 ```
 
 You will get pwsafe.app in current directory. It will work on your mac while
@@ -150,6 +154,7 @@ in incompatible way. To build fully distributable package, see next step.
 ### Installer
 
 ```sh
+cd path-to-build-dir
 cpack -G DragNDrop
 ```
 
