@@ -134,7 +134,7 @@ To allow cmake to find gettext tools, add them to path
 export PATH=/usr/local/opt/gettext/bin:$PATH
 ```
 
-Point cmake to custom wxWidgets build set `WX_CONFIG` environment variable (optional).
+Point cmake to custom wxWidgets build by setup `WX_CONFIG` environment variable (optional).
 
 ```sh
 export WX_CONFIG=<path to wx-config script>
