@@ -18,6 +18,7 @@
 #include <cstdlib>
 #include <cstring> // for memset
 #include <sys/stat.h>
+#include <wx/stdpaths.h>
 
 stringT pws_os::getexecdir()
 {
@@ -134,7 +135,7 @@ static bool direxists(const stringT &path, bool createIfNeeded)
 
       if (status == 0 && (S_ISDIR(statbuf.st_mode) || S_ISLNK(statbuf.st_mode)))
         retval = true;
-      
+
       // no existing dir, create one if so instructed
       if (!retval && createIfNeeded) {
         const mode_t oldmode = umask(0);
@@ -158,7 +159,7 @@ static stringT createuserprefsdir(void)
   stringT cfgdir = pws_os::getenv("HOME", true);
 
   if (!cfgdir.empty()) { // if $HOME's not defined, we have bigger problems...
- 
+
     // (1)
     cfgdir += _T(".pwsafe");
 
@@ -205,22 +206,20 @@ stringT pws_os::getsafedir(void)
 
 stringT pws_os::getxmldir(void)
 {
-#ifdef __FreeBSD__
-  return _T("/usr/local/share/pwsafe/xml/");
-#else
-  return _T("/usr/share/passwordsafe/xml/");
-#endif
+  stringT prefix = wxStandardPaths::Get().GetInstallPrefix().ToStdWstring();
+  return prefix + _T("/share/pwsafe/xml/");
 }
 
 stringT pws_os::gethelpdir(void)
 {
   stringT helpdir = pws_os::getenv("PWS_HELPDIR", true);
   if (helpdir.empty()) {
-#if defined( __FreeBSD__) || defined(__OpenBSD)
-    helpdir = _T("/usr/local/share/doc/passwordsafe/help/");
-#else
-    helpdir = _T("/usr/share/passwordsafe/help/");
-#endif
+    stringT prefix = wxStandardPaths::Get().GetInstallPrefix().ToStdWstring();
+    #if defined(__FreeBSD__) || defined(__OpenBSD)
+      helpdir = prefix + _S("/share/doc/passwordsafe/help/");
+    #else
+      helpdir = prefix + _S("/share/passwordsafe/help/");
+    #endif
   }
   return helpdir;
 }
