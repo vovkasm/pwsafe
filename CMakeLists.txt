@@ -395,7 +395,7 @@ endif (XML_XERCESC)
 
 if (APPLE)
   FIND_LIBRARY(QUARTZCORE_LIBS QuartzCore)
-  target_link_libraries(pwsafe ${wxWidgets_LIBRARIES} ${CMAKE_REQUIRED_LIBRARIES} ${QUARTZCORE_LIBS} curl ${OPENSSL_SSL_LIBRARY})
+  target_link_libraries(pwsafe ${wxWidgets_LIBRARIES} ${CMAKE_REQUIRED_LIBRARIES} ${QUARTZCORE_LIBS} curl ${OPENSSL_SSL_LIBRARY} ${MAGIC_LIBRARIES})
 elseif (WIN32)
   if (NOT NO_YUBI)
     set (YUBILIB "YkLib22")
