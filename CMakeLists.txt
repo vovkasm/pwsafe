@@ -381,6 +381,7 @@ target_link_libraries(pwsafe harden_interface)
 # Bundle library dependency after installing app
 if (APPLE)
   install(CODE "
+    list(APPEND CMAKE_MODULE_PATH \"${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules\")
     include(BundleUtilities)
     set(BU_CHMOD_BUNDLE_ITEMS 1)
     fixup_bundle(\"\${CMAKE_INSTALL_PREFIX}/pwsafe.app\" \"\" \"\")
