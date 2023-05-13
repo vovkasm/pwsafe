@@ -49,10 +49,15 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules")
 
 include(create-harden-interface)
 
+if (APPLE)
+  set (NO_GTEST_DEFAULT ON)
+else (APPLE)
+  set (NO_GTEST_DEFAULT OFF)
+endif (APPLE)
 
 # Configurable options:
 option (NO_YUBI "Set ON to disable YubiKey support" OFF)
-option (NO_GTEST "Set ON to disable gtest unit testing" OFF)
+option (NO_GTEST "Set ON to disable gtest unit testing" ${NO_GTEST_DEFAULT})
 option (GTEST_BUILD "Set OFF to disable gtest download and build on-fly" ON)
 
 if (WIN32)
