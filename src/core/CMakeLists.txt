@@ -80,7 +80,7 @@ if (NOT XML_MSXML AND NOT XML_XERCESC)
 endif (NOT XML_MSXML AND NOT XML_XERCESC)
 
 if (NOT WIN32 OR WX_WINDOWS)
-  list (APPEND CORE_SRCS ${CMAKE_CURRENT_BINARY_DIR}/core_st.cpp)
+  list (APPEND CORE_SRCS ${CMAKE_CURRENT_BINARY_DIR}/core_st.cpp ${CMAKE_CURRENT_BINARY_DIR}/core_st.h)
   if (WIN32)
     set (PERL_EXECUTABLE "Perl_executable_undefined" CACHE FILEPATH
     "Path to perl.exe, from activestate.com or Cygwin")
