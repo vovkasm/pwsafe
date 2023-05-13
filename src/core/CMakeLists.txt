@@ -1,7 +1,6 @@
 include(CheckLibraryExists)
 
 set (CORE_SRCS
- 
   CheckVersion.cpp
   Command.cpp
   CoreImpExp.cpp
@@ -84,7 +83,7 @@ if (NOT WIN32 OR WX_WINDOWS)
   list (APPEND CORE_SRCS ${CMAKE_CURRENT_BINARY_DIR}/core_st.cpp)
   if (WIN32)
     set (PERL_EXECUTABLE "Perl_executable_undefined" CACHE FILEPATH
-    "Path to perl.exe, from activestate.com or Cygwin") 
+    "Path to perl.exe, from activestate.com or Cygwin")
     set (MV "move")
     string (REPLACE "/" "\\" FROM "${PROJECT_SOURCE_DIR}/src/core/core_st")
     string (REPLACE "/" "\\" TO "${CMAKE_CURRENT_BINARY_DIR}/core_st")

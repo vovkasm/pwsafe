@@ -61,7 +61,7 @@ if (WIN32)
     option (XML_XERCESC "Set ON for XML import support with XercesC" ON)
   else (WX_WINDOWS)
     option (XML_MSXML "Set ON for XML import support with MSXML" ON)
-    option (XML_XERCESC "Set ON for XML import support with XercesC" OFF)    
+    option (XML_XERCESC "Set ON for XML import support with XercesC" OFF)
   endif (WX_WINDOWS)
   if (XML_MSXML AND XML_XERCESC)
     message (FATAL_ERROR "MSXML and XERCESC are mutually exclusive")
@@ -323,7 +323,7 @@ elseif (WIN32)
   if (NOT NO_YUBI)
     set (YUBILIB "YkLib22")
   endif ()
-  target_link_libraries(pwsafe ${wxWidgets_LIBRARIES} 
+  target_link_libraries(pwsafe ${wxWidgets_LIBRARIES}
       ${YUBILIB} ${PWS_DLL_LIBS} version Rpcrt4 htmlhelp SetupAPI Hid usp10
       Dbghelp Urlmon gdiplus ${MSXML_LIB} ${CMAKE_REQUIRED_LIBRARIES})
 else ()
@@ -463,7 +463,7 @@ endif (NOT WIN32)
 # Determine name of distribution (Ubuntu, LinuxMint, ...)
 #
 
-# Find out what linux distro we're on... currently only used for 
+# Find out what linux distro we're on... currently only used for
 # debian based distros
 find_program(LSB_RELEASE_EXECUTABLE lsb_release
   DOC "Linux Standard Base and Distribution command line query client")
@@ -526,17 +526,17 @@ set(CPACK_POST_BUILD_SCRIPTS "${PROJECT_SOURCE_DIR}/CMakeModules/PostBuild.cmake
 
 if (EXISTS "/etc/debian_version")
 ## we are on a debian based distro, but we can't make assumptions about which
-## we will do general deb related setup and relegate deps to specific distros 
+## we will do general deb related setup and relegate deps to specific distros
 
 ADD_CUSTOM_COMMAND(OUTPUT ${CMAKE_BINARY_DIR}/changelog.Debian.gz
-                   COMMAND /bin/gzip ARGS -9 -n -k 
+                   COMMAND /bin/gzip ARGS -9 -n -k
                    "${PROJECT_SOURCE_DIR}/install/deb/changelog.Debian"
-                   COMMAND /bin/mv ARGS 
-                   "${PROJECT_SOURCE_DIR}/install/deb/changelog.Debian.gz" 
+                   COMMAND /bin/mv ARGS
+                   "${PROJECT_SOURCE_DIR}/install/deb/changelog.Debian.gz"
                    ${CMAKE_BINARY_DIR}/changelog.Debian.gz)
 
 ADD_CUSTOM_TARGET(changelog ALL DEPENDS ${CMAKE_BINARY_DIR}/changelog.Debian.gz)
-install (FILES ${CMAKE_BINARY_DIR}/changelog.Debian.gz 
+install (FILES ${CMAKE_BINARY_DIR}/changelog.Debian.gz
          DESTINATION "share/doc/passwordsafe")
 install (FILES "install/deb/copyright.debian" DESTINATION "share/doc/passwordsafe"
          RENAME "copyright")
@@ -589,7 +589,7 @@ if ((${RELEASE_ID_SHORT} STREQUAL "Debian") OR (${RELEASE_ID_SHORT} STREQUAL "Ra
     set (LIBQRENCODE "libqrencode3 (>= 3.4.4-1+b2)")
   endif (NOT ${RELEASE_NUM_SHORT} VERSION_LESS "10")
   set (CPACK_DEBIAN_PACKAGE_DEPENDS "libc6 (>= 2.7-18lenny4), ${LIBCURL}, libmagic1 (>= 1:5.22), libuuid1 (>= 1.41.3-1),
-                                     libwxgtk3.0-0 (>= 3.0.0-2) | libwxgtk3.0-0v5 (>= 3.0.0-2) | 
+                                     libwxgtk3.0-0 (>= 3.0.0-2) | libwxgtk3.0-0v5 (>= 3.0.0-2) |
                                      libwxgtk3.0-gtk3-0v5 (>= 3.0.5.1) | libwxgtk3.2-1 (>= 3.2.2+dfsg-2),
                                      libxtst6 (>= 2:1.0.3-1), ${LIBXERCES}, libykpers-1-1 (>= 1.7.0-1), ${LIBQRENCODE}")
   set (CPACK_DEBIAN_PACKAGE_RECOMMENDS "xvkbd (>= 3.3-1+b1)")
@@ -618,7 +618,7 @@ endif ((${RELEASE_ID_SHORT} STREQUAL "LinuxMint") OR (${RELEASE_ID_SHORT} STREQU
 
 set (CPACK_DEBIAN_PACKAGE_DESCRIPTION "Password Safe is a password database utility.\n Like many other such products, commercial and otherwise,\n it stores your passwords in an encrypted file.")
 
-set (CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA 
+set (CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA
   "${CMAKE_CURRENT_SOURCE_DIR}/install/deb/prerm;${CMAKE_CURRENT_SOURCE_DIR}/install/deb/postinst")
 endif (EXISTS "/etc/debian_version")
 
